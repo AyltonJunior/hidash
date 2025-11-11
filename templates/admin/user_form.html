@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - HiDash{% endblock %}
+
+{% block content %}
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">{{ title }}</h1>
+    <a href="{{ url_for('users') }}" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+        <i class="fas fa-arrow-left fa-sm text-white-50"></i> Back to Users
+    </a>
+</div>
+
+<!-- User Form -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">User Information</h6>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <div class="form-group row mb-3">
+                <label for="name" class="col-sm-3 col-form-label">Name:</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
+                           id="name" name="name" value="{{ form.name.data or '' }}" required>
+                    {% if form.name.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.name.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-group row mb-3">
+                <label for="email" class="col-sm-3 col-form-label">Email:</label>
+                <div class="col-sm-9">
+                    <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                           id="email" name="email" value="{{ form.email.data or '' }}" required>
+                    {% if form.email.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if 'password' in form %}
+            <div class="form-group row mb-3">
+                <label for="password" class="col-sm-3 col-form-label">Password:</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
+                               id="password" name="password" required>
+                        <button class="btn btn-outline-secondary toggle-password" type="button" data-target="#password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        {% if form.password.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="password-rules mt-2">
+                        <h6 class="text-muted mb-2">Password must contain:</h6>
+                        <div class="password-rule" id="length-rule">
+                            <i class="fas fa-times-circle text-danger"></i> At least 8 characters
+                        </div>
+                        <div class="password-rule" id="uppercase-rule">
+                            <i class="fas fa-times-circle text-danger"></i> At least 1 uppercase letter
+                        </div>
+                        <div class="password-rule" id="lowercase-rule">
+                            <i class="fas fa-times-circle text-danger"></i> At least 1 lowercase letter
+                        </div>
+                        <div class="password-rule" id="number-rule">
+                            <i class="fas fa-times-circle text-danger"></i> At least 1 number
+                        </div>
+                        <div class="password-rule" id="special-rule">
+                            <i class="fas fa-times-circle text-danger"></i> At least 1 special character
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group row mb-3">
+                <label for="confirm_password" class="col-sm-3 col-form-label">Confirm Password:</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="password" class="form-control {% if form.confirm_password.errors %}is-invalid{% endif %}" 
+                               id="confirm_password" name="confirm_password" required>
+                        <button class="btn btn-outline-secondary toggle-password" type="button" data-target="#confirm_password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        {% if form.confirm_password.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.confirm_password.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if 'password' in form._fields and request.endpoint == 'edit_user' and (form.role.data == 'master' or form.role.data == 'admin') %}
+            <!-- Campos de senha para edição de usuários Master e Admin -->
+            <div class="form-group row mb-3">
+                <label for="password" class="col-sm-3 col-form-label">Password:</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
+                               id="password" name="password">
+                        <button class="btn btn-outline-secondary toggle-password" type="button" data-target="#password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        {% if form.password.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <small class="form-text text-muted">Leave blank to keep current password</small>
+                    <div class="password-rules mt-2">
+                        <h6 class="text-muted mb-2">Password must contain:</h6>
+                        <div class="password-rule" id="edit-length-rule">
+                            <i class="fas fa-times-circle text-danger"></i> At least 8 characters
+                        </div>
+                        <div class="password-rule" id="edit-uppercase-rule">
+                            <i class="fas fa-times-circle text-danger"></i> At least 1 uppercase letter
+                        </div>
+                        <div class="password-rule" id="edit-lowercase-rule">
+                            <i class="fas fa-times-circle text-danger"></i> At least 1 lowercase letter
+                        </div>
+                        <div class="password-rule" id="edit-number-rule">
+                            <i class="fas fa-times-circle text-danger"></i> At least 1 number
+                        </div>
+                        <div class="password-rule" id="edit-special-rule">
+                            <i class="fas fa-times-circle text-danger"></i> At least 1 special character
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group row mb-3">
+                <label for="confirm_password" class="col-sm-3 col-form-label">Confirm Password:</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="password" class="form-control {% if form.confirm_password.errors %}is-invalid{% endif %}" 
+                               id="confirm_password" name="confirm_password">
+                        <button class="btn btn-outline-secondary toggle-password" type="button" data-target="#confirm_password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        {% if form.confirm_password.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.confirm_password.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="form-group row mb-3">
+                <label for="role" class="col-sm-3 col-form-label">Role:</label>
+                <div class="col-sm-9">
+                    <select class="form-control {% if form.role.errors %}is-invalid{% endif %}" 
+                            id="role" name="role" required>
+                        {% for value, label in form.role.choices %}
+                            <option value="{{ value }}" {% if form.role.data == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if form.role.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.role.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-group row mb-3">
+                <label for="company_id" class="col-sm-3 col-form-label">Company:</label>
+                <div class="col-sm-9">
+                    <select class="form-control {% if form.company_id.errors %}is-invalid{% endif %}" 
+                            id="company_id" name="company_id" required>
+                        {% for value, label in form.company_id.choices %}
+                            <option value="{{ value }}" {% if form.company_id.data == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if form.company_id.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.company_id.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-group row mb-3">
+                <label for="department_ids" class="col-sm-3 col-form-label">Departments:</label>
+                <div class="col-sm-9">
+                    <select multiple class="form-control {% if form.department_ids.errors %}is-invalid{% endif %}" 
+                            id="department_ids" name="department_ids" {% if form.role.data == 'admin' %}disabled{% endif %}>
+                        {% if form.department_ids.choices %}
+                            {% for value, label in form.department_ids.choices %}
+                                <option value="{{ value }}" {% if form.department_ids.data and value in form.department_ids.data %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                    {% if form.department_ids.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.department_ids.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <small class="form-text text-muted">
+                        {% if form.role.data == 'admin' %}
+                            Administrators have access to all departments automatically.
+                        {% else %}
+                            Hold Ctrl (Windows) or Command (Mac) to select multiple departments.
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <div class="col-sm-9 offset-sm-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save User
+                    </button>
+                    <a href="{{ url_for('users') }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

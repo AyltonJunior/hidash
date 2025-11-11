@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - HiDash{% endblock %}
+
+{% block content %}
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">{{ title }}</h1>
+    <a href="{{ url_for('manage_dashboards') }}" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+        <i class="fas fa-arrow-left fa-sm text-white-50"></i> Back to Dashboards
+    </a>
+</div>
+
+<!-- Dashboard Form -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Dashboard Information</h6>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <div class="form-group row mb-3">
+                <label for="name" class="col-sm-3 col-form-label">Dashboard Name:</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
+                           id="name" name="name" value="{{ form.name.data or '' }}" required>
+                    {% if form.name.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.name.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-group row mb-3">
+                <label for="department_id" class="col-sm-3 col-form-label">Department:</label>
+                <div class="col-sm-9">
+                    <select class="form-control {% if form.department_id.errors %}is-invalid{% endif %}" 
+                            id="department_id" name="department_id" required>
+                        {% for value, label in form.department_id.choices %}
+                            <option value="{{ value }}" {% if form.department_id.data == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if form.department_id.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.department_id.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-group row mb-3">
+                <label for="description" class="col-sm-3 col-form-label">Description:</label>
+                <div class="col-sm-9">
+                    <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}" 
+                              id="description" name="description" rows="3">{{ form.description.data or '' }}</textarea>
+                    {% if form.description.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.description.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-group row mb-3">
+                <label for="power_bi_link" class="col-sm-3 col-form-label">Power BI Link:</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control {% if form.power_bi_link.errors %}is-invalid{% endif %}" 
+                           id="power_bi_link" name="power_bi_link" value="{{ form.power_bi_link.data or '' }}" required
+                           placeholder="https://app.powerbi.com/...">
+                    {% if form.power_bi_link.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.power_bi_link.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <small class="form-text text-muted">
+                        Enter the full Power BI link for embedding (starts with https://app.powerbi.com/).
+                    </small>
+                </div>
+            </div>
+            
+            <div class="form-group row mb-3">
+                <div class="col-sm-3">Status:</div>
+                <div class="col-sm-9">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                               {% if form.is_active.data %}checked{% endif %}>
+                        <label class="form-check-label" for="is_active">
+                            Active
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <div class="col-sm-9 offset-sm-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Dashboard
+                    </button>
+                    <a href="{{ url_for('manage_dashboards') }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

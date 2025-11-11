@@ -1,0 +1,152 @@
+Desenvolver um sistema completo HiDash - SaaS de Visualização de Dashboards Power BI conforme os seguintes requisitos claros e objetivos, com backend em Python (Flask), frontend HTML5/CSS3 responsivo e integração direta entre frontend e backend via rotas seguras.
+
+🎯 Requisitos principais do sistema:
+Login Seguro
+
+Apenas e-mail e senha.
+
+Esqueci a senha: exibir apenas mensagem "Entre em contato com o administrador para receber novo acesso." (não enviar e-mail).
+
+Sessões protegidas.
+
+Senhas criptografadas e com política forte (mínimo 8 caracteres, 1 maiúscula, 1 número, 1 símbolo).
+
+Proteção contra brute force.
+
+Perfis de Acesso
+
+Usuário Master:
+
+Acesso a todas as empresas.
+
+Cadastra, edita e exclui empresas, usuários administradores e usuários master.
+
+Usuário Administrador (por empresa):
+
+Gerencia apenas a empresa vinculada.
+
+Cadastra, edita e exclui departamentos, dashboards e usuários comuns da sua empresa.
+
+Usuário Comum:
+
+Visualiza apenas os dashboards vinculados ao(s) seu(s) departamento(s).
+
+Ao clicar, o dashboard abre em tela cheia com botão de voltar flutuante no canto superior direito.
+
+Cadastros
+
+Cadastro completo de empresas.
+
+Cadastro de departamentos por empresa.
+
+Cadastro de dashboards por departamento.
+
+Armazenar apenas o link do Power BI, o backend gera automaticamente o iframe em tela cheia seguro.
+
+Cadastro de usuários:
+
+Nome.
+
+E-mail.
+
+Senha.
+
+Empresa.
+
+Departamentos (multi seleção).
+
+Perfil: Master / Administrador / Usuário.
+
+Apenas master pode vincular usuários a qualquer empresa.
+
+Apenas administradores podem vincular usuários a sua empresa.
+
+💻 Frontend (UX/CX)
+Interface moderna, clara, limpa e responsiva.
+
+Basear o layout na template SB Admin 2, com melhorias visuais:
+
+Menu lateral esquerdo moderno.
+
+Ícones ao lado de cada menu (Dashboards, Departamentos, Usuários, Empresas, Sair).
+
+Logo moderna HiDash no topo.
+
+Rodapé lateral com:
+
+arduino
+Copiar
+Editar
+Desenvolvido por Ikli Tecnologia  
+Uma empresa do Grupo Hi
+Feedback claro em todas ações (sucesso, erro, carregamento).
+
+Formulários com validação amigável.
+
+Campo senha deve mostrar abaixo as regras obrigatórias.
+
+🛡 Backend (API + Lógica)
+Python 3.12+ com Flask.
+
+SQLAlchemy.
+
+Banco SQLite (fácil de migrar para PostgreSQL no futuro).
+
+Arquitetura MVC limpa e organizada.
+
+Integração backend e frontend via rotas protegidas.
+
+Roteamento seguro conforme perfil.
+
+Os dashboards ao serem acessados devem gerar automaticamente o iframe com fullscreen sem expor o código ao usuário, e conter botão de voltar flutuante no canto superior direito da tela.
+
+🔧 Infraestrutura
+Rodar em servidor remoto (ex: Digital Ocean).
+
+Configuração segura com Gunicorn + NGINX + SSL Let's Encrypt.
+
+Scripts de backup e restore automáticos do banco.
+
+Scripts de reset seguro do usuário master.
+
+📁 Entregáveis
+Projeto completo, funcional e pronto para subir em servidor.
+
+Estrutura em ZIP organizada:
+
+app.py
+
+init_db.py
+
+static/
+
+templates/
+
+instance/
+
+Scripts auxiliares.
+
+🖼 Logo
+Utilizar a logo moderna anexa a este prompt, que deve ser exibida:
+
+Na tela de login (sem textos adicionais).
+
+No menu lateral superior em todas as páginas.
+
+✅ Resumo de telas principais:
+Tela	Acessível por	Funcionalidade
+Login	Todos	Login com e-mail e senha
+Empresas	Master	Cadastro, edição, exclusão de empresas
+Usuários	Master, Admin	Cadastro, edição, exclusão, perfil, empresa, deptos
+Departamentos	Admin	Cadastro, edição, exclusão
+Dashboards	Admin	Cadastro, edição, exclusão (link Power BI apenas)
+Dashboards Visual	Usuário, Admin, Master	Visualizar dashboard em fullscreen
+
+⚡ Requisitos técnicos obrigatórios:
+Não permitir que usuário visualize ou altere código embed.
+
+Todas as comunicações frontend-backend protegidas.
+
+Sistema limpo, bonito, seguro, escalável e funcional.
+
+Entregar todos os arquivos completos, sem exemplos ou pedaços isolados.
