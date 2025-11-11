@@ -18,7 +18,11 @@ class Base(DeclarativeBase):
     pass
 
 # Initialize Flask app
-app = Flask(__name__)
+# Configurar caminhos absolutos para templates e static files (necessário para serverless)
+template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+
+app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 app.config.from_object(Config)
 app.secret_key = os.environ.get("SESSION_SECRET", "hidash_secure_key")
 app.permanent_session_lifetime = timedelta(hours=12)
@@ -64,15 +68,28 @@ limiter = Limiter(
 
 # Import models here to avoid circular imports
 # Em ambiente serverless, não criar tabelas automaticamente (usar migrations)
-with app.app_context():
-    from models import User, Company, Department, Dashboard
-    # Apenas criar tabelas se não estiver em produção ou se DATABASE_URL estiver definido
-    if not IS_VERCEL or os.environ.get('DATABASE_URL'):
-        try:
-            db.create_all()
-            logging.info("Database tables created/verified")
-        except Exception as e:
-            logging.warning(f"Database initialization warning: {str(e)}")
+try:
+    with app.app_context():
+        from models import User, Company, Department, Dashboard
+        # Apenas criar tabelas se não estiver em produção ou se DATABASE_URL estiver definido
+        if not IS_VERCEL or os.environ.get('DATABASE_URL'):
+            try:
+                db.create_all()
+                logging.info("Database tables created/verified")
+            except Exception as e:
+                logging.warning(f"Database initialization warning: {str(e)}")
+                # Não falhar se o banco não estiver disponível ainda
+except Exception as e:
+    logging.error(f"Error importing models: {str(e)}")
+    # Continuar mesmo se houver erro na importação dos models (pode ser problema de DB)
+    pass
 
 # Import routes after database initialization
-from routes import *
+try:
+    from routes import *
+except Exception as e:
+    logging.error(f"Error importing routes: {str(e)}", exc_info=True)
+    # Criar uma rota de fallback para debug
+    @app.route('/')
+    def fallback():
+        return f"Error loading routes: {str(e)}", 500
