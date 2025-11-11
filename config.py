@@ -20,8 +20,9 @@ class Config:
     RATELIMIT_HEADERS_ENABLED = True
     
     # Session configuration
-    SESSION_COOKIE_SECURE = True
+    # SESSION_COOKIE_SECURE será ajustado dinamicamente baseado no ambiente
     SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
     
     # Application title
     APP_TITLE = "HiDash"

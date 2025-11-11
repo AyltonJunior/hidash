@@ -22,14 +22,24 @@ app = Flask(__name__)
 app.config.from_object(Config)
 app.secret_key = os.environ.get("SESSION_SECRET", "hidash_secure_key")
 app.permanent_session_lifetime = timedelta(hours=12)
-app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# Initialize database with improved connection handling
+# Detectar ambiente Vercel
+IS_VERCEL = os.environ.get('VERCEL') or os.environ.get('VERCEL_ENV')
+
+# ProxyFix apenas se não estiver na Vercel (a Vercel já faz proxy reverso)
+if not IS_VERCEL:
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+# Initialize database with improved connection handling for serverless
+# Ajustar pool size para ambiente serverless (menos conexões simultâneas)
+pool_size = 1 if IS_VERCEL else 10
+max_overflow = 0 if IS_VERCEL else 15
+
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_pre_ping": True,
     "pool_recycle": 280,
-    "pool_size": 10,
-    "max_overflow": 15,
+    "pool_size": pool_size,
+    "max_overflow": max_overflow,
     "connect_args": {
         "connect_timeout": 10
     }
@@ -53,10 +63,16 @@ limiter = Limiter(
 )
 
 # Import models here to avoid circular imports
+# Em ambiente serverless, não criar tabelas automaticamente (usar migrations)
 with app.app_context():
     from models import User, Company, Department, Dashboard
-    db.create_all()
-    logging.info("Database tables created")
+    # Apenas criar tabelas se não estiver em produção ou se DATABASE_URL estiver definido
+    if not IS_VERCEL or os.environ.get('DATABASE_URL'):
+        try:
+            db.create_all()
+            logging.info("Database tables created/verified")
+        except Exception as e:
+            logging.warning(f"Database initialization warning: {str(e)}")
 
 # Import routes after database initialization
 from routes import *
